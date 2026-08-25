@@ -140,6 +140,12 @@ These are real, verified against the live API, and worth knowing before you buil
   `PUT` returns 200 having quietly dropped fields it does not recognise. Always
   `get_recipe` an existing recipe and copy the attribute names from the response rather
   than guessing.
+- **`tags` cannot be set through `update_recipe`.** A tags string returns 200 and is
+  silently dropped; an array or `tag_list` returns `500 ArgumentError`. In the same
+  request, `package_yield_quantity`, `packages` and `sku` all apply correctly, so this is
+  specific to tags rather than to the encoding. Tags do carry forward when `scale_recipe` 
+  clones a tagged template, which is currently the only reliable way to get them onto a
+  new recipe.
 
 ## Rate limits
 

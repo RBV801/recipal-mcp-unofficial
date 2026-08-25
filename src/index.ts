@@ -273,8 +273,11 @@ const FIELDS_DESC =
   "Open key/value object of attributes. Keys are passed straight through to the " +
   "ReciPal API namespaced under the resource (e.g. {name, package_yield_quantity, " +
   "package_yield_unit, servings, packages, suggested_serving, sku, preparation, " +
-  "tags, visual_unit_of_measure}). Call get_recipe on an existing recipe first to see " +
-  "the exact attribute names this account uses.";
+  "visual_unit_of_measure}). Call get_recipe on an existing recipe first to see " +
+  "the exact attribute names this account uses. " +
+  "Note that tags cannot be set here -- ReciPal accepts the request and silently ignores " +
+  "a tags string, and errors on other shapes. Tags do carry forward through scale_recipe " +
+  "when cloning a tagged template.";
 
 const TOOLS: Tool[] = [
   /* ---------- read ---------- */

@@ -97,7 +97,7 @@ Create a new empty recipe. POST /recipes. Prefer scale_recipe (clone a fully-con
 
 | Parameter | Type | Required | Notes |
 |---|---|---|---|
-| `fields` | object | yes | Open key/value object of attributes. Keys are passed straight through to the ReciPal API namespaced under the resource (e.g. {name, package_yield_quantity, package_yield_unit, servings, packages, suggested_serving, sku, preparation, tags, visual_unit_of_measure}). Call get_recipe on an existing recipe first to see the exact attribute names this account uses. |
+| `fields` | object | yes | Open key/value object of attributes. Keys are passed straight through to the ReciPal API namespaced under the resource (e.g. {name, package_yield_quantity, package_yield_unit, servings, packages, suggested_serving, sku, preparation, visual_unit_of_measure}). Call get_recipe on an existing recipe first to see the exact attribute names this account uses. Note that tags cannot be set here -- ReciPal accepts the request and silently ignores a tags string, and errors on other shapes. Tags do carry forward through scale_recipe when cloning a tagged template. |
 | `as_json` | boolean | no | Send JSON instead of form encoding. |
 
 ## create_recipe_shortcut
@@ -106,7 +106,7 @@ Create a complete recipe with its ingredients in one request. POST /recipes/shor
 
 | Parameter | Type | Required | Notes |
 |---|---|---|---|
-| `fields` | object | yes | Open key/value object of attributes. Keys are passed straight through to the ReciPal API namespaced under the resource (e.g. {name, package_yield_quantity, package_yield_unit, servings, packages, suggested_serving, sku, preparation, tags, visual_unit_of_measure}). Call get_recipe on an existing recipe first to see the exact attribute names this account uses. Also include ingredient_ids and ingredient_weights: parallel lists of the same length, weights in grams. Either may be an array or a comma-separated string. |
+| `fields` | object | yes | Open key/value object of attributes. Keys are passed straight through to the ReciPal API namespaced under the resource (e.g. {name, package_yield_quantity, package_yield_unit, servings, packages, suggested_serving, sku, preparation, visual_unit_of_measure}). Call get_recipe on an existing recipe first to see the exact attribute names this account uses. Note that tags cannot be set here -- ReciPal accepts the request and silently ignores a tags string, and errors on other shapes. Tags do carry forward through scale_recipe when cloning a tagged template. Also include ingredient_ids and ingredient_weights: parallel lists of the same length, weights in grams. Either may be an array or a comma-separated string. |
 | `as_json` | boolean | no |  |
 
 ## update_recipe
@@ -116,7 +116,7 @@ Update a recipe's attributes. PUT /recipes/{id}.
 | Parameter | Type | Required | Notes |
 |---|---|---|---|
 | `recipe_id` | string | yes |  |
-| `fields` | object | yes | Open key/value object of attributes. Keys are passed straight through to the ReciPal API namespaced under the resource (e.g. {name, package_yield_quantity, package_yield_unit, servings, packages, suggested_serving, sku, preparation, tags, visual_unit_of_measure}). Call get_recipe on an existing recipe first to see the exact attribute names this account uses. |
+| `fields` | object | yes | Open key/value object of attributes. Keys are passed straight through to the ReciPal API namespaced under the resource (e.g. {name, package_yield_quantity, package_yield_unit, servings, packages, suggested_serving, sku, preparation, visual_unit_of_measure}). Call get_recipe on an existing recipe first to see the exact attribute names this account uses. Note that tags cannot be set here -- ReciPal accepts the request and silently ignores a tags string, and errors on other shapes. Tags do carry forward through scale_recipe when cloning a tagged template. |
 | `as_json` | boolean | no |  |
 
 ## scale_recipe

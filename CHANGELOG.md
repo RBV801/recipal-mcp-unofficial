@@ -10,6 +10,7 @@ summarised here for context rather than documented in full.
 - npm publishing is now permitted: removed `"private": true`, added `files: ["build"]` and a `prepare` script, so `npx -y recipal-mcp-unofficial` and `npm install github:RBV801/recipal-mcp-unofficial` work. `README.md` and `docs/SETUP.md` now lead with npx.
 - The `per_page` ceiling is 20, not 100; the API silently reduces larger values to 20.
 - Documented that a wrong or unowned ID returns `401 Unauthorized`, not `404` (in `README.md` and `docs/SETUP.md`), and that unrecognised recipe attributes are silently dropped on `PUT` (in `README.md`).
+- Documented that `tags` cannot be set through `update_recipe` — a string returns 200 and is silently dropped, while an array or `tag_list` returns `500 ArgumentError`. Tags still carry forward through `scale_recipe` cloning a tagged template.
 - `FIELDS_DESC` now lists the attribute names that actually appear in `get_recipe` responses.
 - Narrowed the distribution restriction to the one thing ReciPal asked for: no assistant plugin packages. npm, registry listings, and npx are no longer excluded.
 - `SUNSET.md` softened to match ReciPal's actual wording, added an upstream-fork invitation, and added an `npm deprecate` step to the archive checklist.
