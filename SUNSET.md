@@ -8,14 +8,18 @@ is mechanical.
 
 ## Why
 
-ReciPal reviewed this project before publication and agreed to it on three
-conditions:
+ReciPal is building an official MCP server. They said it would be great if the
+README were updated to point at the official one once it ships, and that this
+repository would *presumably* be archived then. The "presumably" is theirs — it
+is a request, not an imposed condition. This document covers the practical steps
+if the archive path is the one that gets chosen.
 
-1. Name it `recipal-mcp-unofficial`, so it cannot be mistaken for theirs.
-2. No consumer-facing plugin distribution — no bundles, no marketplace listings.
-3. Point at the official server and archive this one once theirs is live.
+## Where the work goes
 
-This document covers the third.
+ReciPal explicitly invited forks and pull requests against their official server:
+"you could fork, modify, and submit a PR." They also said they value this being
+used in production rather than built in a vacuum. So anything here that is still
+useful when their server ships should go upstream rather than be abandoned.
 
 ## What "archived" means
 
@@ -52,7 +56,12 @@ Two consequences worth being clear about:
 6. **Update anything outside this repository that links here.** Your own notes and
    configs, and any comment where you mentioned it.
 7. **Disable issues** in Settings, so nobody files into a void.
-8. **Archive**: Settings → General → Danger Zone → Archive this repository.
+8. **Run `npm deprecate` on the npm package**:
+   `npm deprecate recipal-mcp-unofficial "Retired — use ReciPal's official MCP server: <url>"`.
+   npm unpublish is only possible within 72 hours of publishing, so deprecation is
+   the real retirement mechanism. The package name then stays claimed permanently —
+   a consequence of publishing worth recording.
+9. **Archive**: Settings → General → Danger Zone → Archive this repository.
 
 Steps 2 through 6 are the ones that are impossible to do afterwards. Do not skip to 8.
 

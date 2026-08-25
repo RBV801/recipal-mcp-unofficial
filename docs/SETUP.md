@@ -18,10 +18,20 @@ Understand what you are copying: **this key has full read, write, and delete
 access to every recipe and ingredient in your account.** ReciPal does not offer
 read-only or scoped keys. Treat it like a password.
 
-## 2. Clone and build
+## 2. Install
+
+### npx (recommended)
 
 ```bash
-git clone https://github.com/BlackBlack/recipal-mcp-unofficial.git
+npx -y recipal-mcp-unofficial
+```
+
+This is the fastest way. The `--yes` / `-y` flag skips the npx install prompt.
+
+### Clone and build (for development, or to run unpublished changes)
+
+```bash
+git clone https://github.com/RBV801/recipal-mcp-unofficial.git
 cd recipal-mcp-unofficial
 npm install
 npm run build
@@ -47,7 +57,7 @@ normal use the key goes in the client's own config.
 ```bash
 claude mcp add --transport stdio recipal-mcp-unofficial \
   --env RECIPAL_API_KEY=your_key_here \
-  -- node /absolute/path/to/recipal-mcp-unofficial/build/index.js
+  -- npx -y recipal-mcp-unofficial
 ```
 
 Verify with `/mcp` — you should see `recipal-mcp-unofficial: connected`.
@@ -63,8 +73,8 @@ Edit `claude_desktop_config.json`:
 {
   "mcpServers": {
     "recipal-mcp-unofficial": {
-      "command": "node",
-      "args": ["/absolute/path/to/recipal-mcp-unofficial/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "recipal-mcp-unofficial"],
       "env": {
         "RECIPAL_API_KEY": "your_key_here"
       }
@@ -73,16 +83,13 @@ Edit `claude_desktop_config.json`:
 }
 ```
 
-Use an **absolute** path — the client's working directory is not your project
-directory. On Windows, escape backslashes (`C:\\Projects\\recipal-mcp-unofficial\\build\\index.js`)
-or use forward slashes.
-
 Restart the app completely. Config is read at launch.
 
 ### Any other client
 
-Launch `node /path/to/build/index.js` with `RECIPAL_API_KEY` in its environment
-and connect over stdio. There is nothing client-specific in the server.
+Launch `npx -y recipal-mcp-unofficial` with `RECIPAL_API_KEY` in its environment
+and connect over stdio. If you built from a clone, launch `node
+/path/to/build/index.js` instead. There is nothing client-specific in the server.
 
 ## 4. Verify
 
@@ -139,8 +146,10 @@ to see the error: `RECIPAL_API_KEY=your_key node build/index.js`. It should prin
 a `ready` line and wait. Anything else is printed as a `FATAL` line explaining
 what to fix.
 
-**HTTP 401** — the key is wrong, or the subscription lapsed. API access requires
-an active paid plan; a lapsed subscription produces 401, not a billing message.
+**HTTP 401** — the key is wrong, the subscription lapsed, **or the ID is wrong/unowned.**
+Requesting an ingredient or recipe your account does not own returns
+`{"error":"NotAuthorized"}` — exactly the same response as an authentication failure.
+If you are sure the key is correct, suspect the ID before you suspect your key.
 
 **HTTP 429** — you hit the rate limit (ReciPal documents ~175,000/week and
 1,000/minute). The server retries with backoff; if it gives up, the error
@@ -160,3 +169,6 @@ rather than reading fields off the raw response. See [DESIGN.md](DESIGN.md).
 **Nothing works and the client logs mention JSON parse errors** — something wrote
 to stdout. stdout is the JSON-RPC channel; a single `console.log` anywhere in the
 server corrupts it. Use `console.error`.
+
+**The tool list looks stale after upgrading** — npx may be serving a cached
+version. Force a fresh fetch with `npx -y recipal-mcp-unofficial@latest`.

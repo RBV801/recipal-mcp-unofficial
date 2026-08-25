@@ -1,18 +1,18 @@
 {
   "name": "recipal-mcp-unofficial",
-  "version": "0.5.0",
-  "private": true,
+  "version": "0.6.0",
   "type": "module",
   "description": "Unofficial MCP server for the ReciPal nutrition-label API \u2014 recipes, ingredients, subrecipes, labels, and bulk clone/swap.",
   "license": "Apache-2.0",
   "author": "Rakmun Bryant-Vick",
-  "homepage": "https://github.com/BlackBlack/recipal-mcp-unofficial#readme",
+  "files": ["build"],
+  "homepage": "https://github.com/RBV801/recipal-mcp-unofficial#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BlackBlack/recipal-mcp-unofficial.git"
+    "url": "git+https://github.com/RBV801/recipal-mcp-unofficial.git"
   },
   "bugs": {
-    "url": "https://github.com/BlackBlack/recipal-mcp-unofficial/issues"
+    "url": "https://github.com/RBV801/recipal-mcp-unofficial/issues"
   },
   "keywords": [
     "mcp",
@@ -31,6 +31,7 @@
     "typecheck": "tsc --noEmit",
     "gen:docs": "node scripts/gen-tools-doc.mjs",
     "test": "node --test test/smoke.test.mjs",
+    "prepare": "npm run build",
     "start": "node build/index.js",
     "verify": "npm run typecheck && npm run build && npm run gen:docs && npm test"
   },

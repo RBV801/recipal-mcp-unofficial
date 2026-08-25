@@ -12,19 +12,16 @@ That is not a reason to avoid contributing. It *is* a reason to prefer small,
 high-value changes over large ones. A fix that helps people during the interim is
 worth making. A refactor that pays off over two years is not.
 
-## Scope is fixed by an agreement, not by preference
+## Scope is fixed by an agreement with ReciPal, not by preference
 
-ReciPal reviewed this project and agreed to its publication on three conditions:
-the `-unofficial` name, no consumer-facing plugin distribution, and archival once
-their official server is live. Those are commitments, so the following will be
-declined no matter how well implemented:
+The one restriction ReciPal imposed on this project is **no assistant plugin
+packages**. No Claude, ChatGPT, or other plugin bundle, and no submission to a
+plugin store — ReciPal will be publishing those themselves alongside their
+official MCP server. Pull requests that add assistant plugin packaging will be
+declined for that reason and no other.
 
 - A packaged plugin bundle of any kind (`.mcpb`, `.dxt`, a Claude Desktop
   extension, an installer).
-- Submission to or metadata for any MCP directory, registry, or marketplace.
-- Publishing to npm, or removing `"private": true` from `package.json`.
-- Renaming away from `recipal-mcp-unofficial`, or any wording that implies ReciPal
-  endorses, supports, or is affiliated with this project.
 
 Not a judgement on the idea — several of those would genuinely be nicer for users.
 They are simply not ours to do.
