@@ -60,7 +60,7 @@ For Claude Desktop, add to `claude_desktop_config.json`:
 }
 ```
 
-Restart the client, then ask it to list your recipes. You should see 19 tools available. Full walkthrough in [docs/SETUP.md](docs/SETUP.md).
+Restart the client, then ask it to list your recipes. You should see 17 tools available. Full walkthrough in [docs/SETUP.md](docs/SETUP.md).
 
 ### For development (clone and build)
 
@@ -106,14 +106,14 @@ See [.env.example](.env.example).
 
 ## Tools
 
-22 tools total, 19 exposed by default. Generated reference with every parameter: **[docs/TOOLS.md](docs/TOOLS.md)**.
+20 tools total, 17 exposed by default. Generated reference with every parameter: **[docs/TOOLS.md](docs/TOOLS.md)**.
 
 | Group | Tools |
 |---|---|
-| Read | `list_recipes`, `get_recipe`, `get_recipe_nutrition`, `list_recipe_ingredients`, `get_recipe_ingredient`, `list_ingredients`, `get_ingredient`, `get_recipe_label` |
+| Read | `list_recipes`, `get_recipe`, `get_recipe_nutrition`, `list_recipe_ingredients`, `get_recipe_ingredient`, `list_ingredients`, `get_ingredient` |
 | Recipe writes | `create_recipe`, `create_recipe_shortcut`, `update_recipe`, `scale_recipe`, `create_subrecipe`, `delete_recipe`† |
 | Ingredient-line writes | `create_recipe_ingredient`, `update_recipe_ingredient`, `delete_recipe_ingredient`†, `update_ingredient` |
-| Labels | `request_label_render` |
+|
 | Bulk | `bulk_create_subrecipes`, `bulk_clone_and_swap` |
 | Escape hatch | `recipal_request`† |
 

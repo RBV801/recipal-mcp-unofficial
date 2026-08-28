@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — do not edit by hand.
      Regenerate with: npm run build && npm run gen:docs -->
 
-22 tools total. 19 are exposed by default; the rest require an
+20 tools total. 17 are exposed by default; the rest require an
 environment variable to be set by whoever runs the server (see the README).
 
 | Tool | Exposed by default |
@@ -25,8 +25,6 @@ environment variable to be set by whoever runs the server (see the README).
 | [`update_recipe_ingredient`](#updaterecipeingredient) | yes |
 | [`delete_recipe_ingredient`](#deleterecipeingredient) | no — needs `RECIPAL_MCP_ALLOW_DELETE=1` |
 | [`update_ingredient`](#updateingredient) | yes |
-| [`get_recipe_label`](#getrecipelabel) | yes |
-| [`request_label_render`](#requestlabelrender) | yes |
 | [`bulk_create_subrecipes`](#bulkcreatesubrecipes) | yes |
 | [`bulk_clone_and_swap`](#bulkcloneandswap) | yes |
 | [`recipal_request`](#recipalrequest) | no — needs `RECIPAL_MCP_ENABLE_RAW=1` |
@@ -191,24 +189,6 @@ Update an ingredient in the library. PUT /ingredients/{id}. Use for renaming (e.
 |---|---|---|---|
 | `ingredient_id` | string | yes |  |
 | `fields` | object | yes | e.g. {name: 'Vanilla Concentrate'} |
-| `as_json` | boolean | no |  |
-
-## get_recipe_label
-
-Get a recipe's label data / render status. GET /recipes/{id}/label.
-
-| Parameter | Type | Required | Notes |
-|---|---|---|---|
-| `recipe_id` | string | yes |  |
-
-## request_label_render
-
-Request a label PDF/PNG render. POST /recipes/{id}/label. Renders take several seconds; poll get_recipe_label for status. ReciPal caps concurrent renders at 5.
-
-| Parameter | Type | Required | Notes |
-|---|---|---|---|
-| `recipe_id` | string | yes |  |
-| `fields` | object | no | e.g. {format: 'pdf'} |
 | `as_json` | boolean | no |  |
 
 ## bulk_create_subrecipes

@@ -20,7 +20,7 @@ test("server completes the MCP handshake and reports its name and version", asyn
 
 test("with all gates enabled, the full tool surface is advertised", async () => {
   const tools = await listTools(ALL_GATES);
-  assert.equal(tools.length, 22, `expected 22 tools, got ${tools.length}`);
+  assert.equal(tools.length, 20, `expected 20 tools, got ${tools.length}`);
   for (const name of GATED) {
     assert.ok(
       tools.some((t) => t.name === name),
@@ -35,7 +35,7 @@ test("by default, destructive and raw tools are hidden", async () => {
   for (const name of GATED) {
     assert.ok(!names.includes(name), `${name} must not be advertised by default`);
   }
-  assert.equal(tools.length, 19, `expected 19 default tools, got ${tools.length}`);
+  assert.equal(tools.length, 17, `expected 17 default tools, got ${tools.length}`);
 });
 
 test("every tool has a description and a valid object input schema", async () => {

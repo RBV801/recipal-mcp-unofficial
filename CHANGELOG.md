@@ -3,6 +3,11 @@
 All notable changes to this project. Versions before 0.4.0 were internal and are
 summarised here for context rather than documented in full.
 
+## 0.6.1
+
+- Pinned `@modelcontextprotocol/sdk` to `~1.12.0` so the server negotiates the `2024-11-05` MCP protocol version, which Devin/Claude clients currently expect. SDK `1.30.0` was returning `2025-11-25` and causing Devin to close the connection during `initialize`.
+- Removed `get_recipe_label` and `request_label_render`. Both endpoints as written (`/recipes/{id}/label`) return 500/404 and the real label endpoint (`/labels/{token}`) is not safely usable through an MCP text channel (potential binary PDF/PNG response), so the tools are removed rather than left advertising broken behaviour.
+
 ## 0.6.0
 
 - Fixed every `BlackBlack` GitHub URL in `package.json`, `README.md`, and `docs/SETUP.md`. The README clone command was pointing at a non-existent account.

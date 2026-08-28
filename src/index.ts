@@ -42,7 +42,7 @@ import {
   type Tool,
 } from "@modelcontextprotocol/sdk/types.js";
 
-const VERSION = "0.6.0";
+const VERSION = "0.6.1";
 
 const log = (...a: unknown[]) => console.error("[recipal-mcp-unofficial]", ...a);
 
@@ -538,32 +538,6 @@ const TOOLS: Tool[] = [
     },
   },
 
-  /* ---------- labels ---------- */
-  {
-    name: "get_recipe_label",
-    description: "Get a recipe's label data / render status. GET /recipes/{id}/label.",
-    inputSchema: {
-      type: "object",
-      properties: { recipe_id: S.str },
-      required: ["recipe_id"],
-    },
-  },
-  {
-    name: "request_label_render",
-    description:
-      "Request a label PDF/PNG render. POST /recipes/{id}/label. Renders take several " +
-      "seconds; poll get_recipe_label for status. ReciPal caps concurrent renders at 5.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        recipe_id: S.str,
-        fields: { ...S.obj, description: "e.g. {format: 'pdf'}" },
-        as_json: S.bool,
-      },
-      required: ["recipe_id"],
-    },
-  },
-
   /* ---------- bulk ---------- */
   {
     name: "bulk_create_subrecipes",
@@ -797,8 +771,6 @@ async function handle(name: string, args: Json): Promise<unknown> {
       });
     case "get_ingredient":
       return recipalFetch(`/ingredients/${args.ingredient_id}`);
-    case "get_recipe_label":
-      return recipalFetch(`/recipes/${args.recipe_id}/label`);
 
     /* ---- writes ---- */
     case "create_recipe":
@@ -866,13 +838,6 @@ async function handle(name: string, args: Json): Promise<unknown> {
         body: { ingredient: fields },
         asJson,
       });
-    case "request_label_render":
-      return recipalFetch(`/recipes/${args.recipe_id}/label`, {
-        method: "POST",
-        body: Object.keys(fields).length ? fields : { format: "pdf" },
-        asJson,
-      });
-
     /* ---- bulk ---- */
     case "bulk_create_subrecipes": {
       const ids = (args.recipe_ids as string[]) ?? [];
