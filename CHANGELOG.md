@@ -3,6 +3,10 @@
 All notable changes to this project. Versions before 0.4.0 were internal and are
 summarised here for context rather than documented in full.
 
+## 0.6.2
+
+- Re-pinned `@modelcontextprotocol/sdk` to `~1.0.4`. SDK `1.12.3` still advertised `2025-03-26` as a supported protocol version, which Devin rejected; `1.0.4` only advertises `2024-11-05` and `2024-10-07`.
+
 ## 0.6.1
 
 - Pinned `@modelcontextprotocol/sdk` to `~1.12.0` so the server negotiates the `2024-11-05` MCP protocol version, which Devin/Claude clients currently expect. SDK `1.30.0` was returning `2025-11-25` and causing Devin to close the connection during `initialize`.

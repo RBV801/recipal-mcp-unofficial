@@ -42,7 +42,7 @@ import {
   type Tool,
 } from "@modelcontextprotocol/sdk/types.js";
 
-const VERSION = "0.6.1";
+const VERSION = "0.6.2";
 
 const log = (...a: unknown[]) => console.error("[recipal-mcp-unofficial]", ...a);
 
