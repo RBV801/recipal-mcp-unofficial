@@ -42,7 +42,7 @@ import {
   type Tool,
 } from "@modelcontextprotocol/sdk/types.js";
 
-const VERSION = "0.5.0";
+const VERSION = "0.6.0";
 
 const log = (...a: unknown[]) => console.error("[recipal-mcp-unofficial]", ...a);
 
@@ -271,22 +271,26 @@ const S = {
 
 const FIELDS_DESC =
   "Open key/value object of attributes. Keys are passed straight through to the " +
-  "ReciPal API namespaced under the resource (e.g. {name, serving_size_quantity, " +
-  "serving_size_unit, servings_per_container, package_yield_quantity, " +
-  "package_yield_unit, tags}). Call get_recipe on an existing recipe first to see " +
-  "the exact attribute names this account uses.";
+  "ReciPal API namespaced under the resource (e.g. {name, package_yield_quantity, " +
+  "package_yield_unit, servings, packages, suggested_serving, sku, preparation, " +
+  "visual_unit_of_measure}). Call get_recipe on an existing recipe first to see " +
+  "the exact attribute names this account uses. " +
+  "Note that tags cannot be set here -- ReciPal accepts the request and silently ignores " +
+  "a tags string, and errors on other shapes. Tags do carry forward through scale_recipe " +
+  "when cloning a tagged template.";
 
 const TOOLS: Tool[] = [
   /* ---------- read ---------- */
   {
     name: "list_recipes",
     description:
-      "List recipes from ReciPal with IDs, names, and tags. Paginated; per_page max 100.",
+      "List recipes from ReciPal with IDs, names, and tags. Paginated; per_page max 20. " +
+      "Larger values are silently reduced to 20, so callers must paginate.",
     inputSchema: {
       type: "object",
       properties: {
         page: { ...S.int, description: "1-based page number (default 1)." },
-        per_page: { ...S.int, description: "Items per page (default 20, max 100)." },
+        per_page: { ...S.int, description: "Items per page (default 20, max 20; larger values are silently reduced)." },
       },
     },
   },
@@ -335,12 +339,13 @@ const TOOLS: Tool[] = [
     name: "list_ingredients",
     description:
       "List the account's ingredient library. Subrecipes appear here once created, " +
-      "which is how you find the ingredient_id needed to add a subrecipe to another recipe.",
+      "which is how you find the ingredient_id needed to add a subrecipe to another recipe. " +
+      "Paginated; per_page max 20. Larger values are silently reduced to 20, so callers must paginate.",
     inputSchema: {
       type: "object",
       properties: {
         page: S.int,
-        per_page: { ...S.int, description: "Default 20, max 100." },
+        per_page: { ...S.int, description: "Default 20, max 20; larger values are silently reduced." },
         search: { ...S.str, description: "Optional name filter, if supported." },
       },
     },
@@ -374,14 +379,21 @@ const TOOLS: Tool[] = [
     name: "create_recipe_shortcut",
     description:
       "Create a complete recipe with its ingredients in one request. POST /recipes/shortcut. " +
-      "KNOWN ISSUE: this returns HTTP 422 for every ingredients-array format tried so far. " +
-      "ReciPal's published docs truncate before the parameter list, so the correct shape is " +
-      "unknown. Prefer create_recipe + create_recipe_ingredient, or scale_recipe to clone a " +
-      "configured template. Left in place so the shape can be discovered.",
+      "The fastest path for building many recipes. Requires ingredient_ids and " +
+      "ingredient_weights: parallel lists of the same length, weights in grams. Either may be " +
+      "given as an array or a comma-separated string. Note this does NOT inherit label " +
+      "settings from an existing recipe -- serving size, package yield and tags all come back " +
+      "unset, so use scale_recipe to clone a configured template when label settings matter.",
     inputSchema: {
       type: "object",
       properties: {
-        fields: { ...S.obj, description: FIELDS_DESC + " Include the ingredients array." },
+        fields: {
+          ...S.obj,
+          description:
+            FIELDS_DESC +
+            " Also include ingredient_ids and ingredient_weights: parallel lists of the same " +
+            "length, weights in grams. Either may be an array or a comma-separated string.",
+        },
         as_json: S.bool,
       },
       required: ["fields"],
@@ -648,8 +660,13 @@ const enabledTools = (): Tool[] => TOOLS.filter((t) => isEnabled(t.name));
  * Response shape helpers
  * ------------------------------------------------------------------ */
 
+/**
+ * ReciPal's per_page ceiling is 20 as observed on 2026-08-25 (undocumented; larger
+ * values are silently reduced to 20). Clamp here so callers cannot accidentally
+ * believe they are requesting more than the API will actually return.
+ */
 const clampPer = (n: unknown) =>
-  Math.min(100, Math.max(1, Number.isFinite(Number(n)) ? Number(n) : 20));
+  Math.min(20, Math.max(1, Number.isFinite(Number(n)) ? Number(n) : 20));
 
 /**
  * ReciPal double-wraps almost everything:
@@ -786,12 +803,20 @@ async function handle(name: string, args: Json): Promise<unknown> {
     /* ---- writes ---- */
     case "create_recipe":
       return recipalFetch("/recipes", { method: "POST", body: { recipe: fields }, asJson });
-    case "create_recipe_shortcut":
+    case "create_recipe_shortcut": {
+      const shortcutFields = { ...fields };
+      for (const key of ["ingredient_ids", "ingredient_weights"]) {
+        const v = shortcutFields[key];
+        if (v !== undefined) {
+          shortcutFields[key] = Array.isArray(v) ? v.join(",") : String(v);
+        }
+      }
       return recipalFetch("/recipes/shortcut", {
         method: "POST",
-        body: { recipe: fields },
+        body: { recipe: shortcutFields },
         asJson,
       });
+    }
     case "update_recipe":
       return recipalFetch(`/recipes/${args.recipe_id}`, {
         method: "PUT",

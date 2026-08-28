@@ -3,6 +3,18 @@
 All notable changes to this project. Versions before 0.4.0 were internal and are
 summarised here for context rather than documented in full.
 
+## 0.6.0
+
+- Fixed every `BlackBlack` GitHub URL in `package.json`, `README.md`, and `docs/SETUP.md`. The README clone command was pointing at a non-existent account.
+- `create_recipe_shortcut` now works. The correct shape is `ingredient_ids` and `ingredient_weights` as parallel comma-separated strings, weights in grams. Either may be an array or a comma-separated string. ReciPal improved the 422 error message, which is what made the shape discoverable.
+- npm publishing is now permitted: removed `"private": true`, added `files: ["build"]` and a `prepare` script, so `npx -y recipal-mcp-unofficial` and `npm install github:RBV801/recipal-mcp-unofficial` work. `README.md` and `docs/SETUP.md` now lead with npx.
+- The `per_page` ceiling is 20, not 100; the API silently reduces larger values to 20.
+- Documented that a wrong or unowned ID returns `401 Unauthorized`, not `404` (in `README.md` and `docs/SETUP.md`), and that unrecognised recipe attributes are silently dropped on `PUT` (in `README.md`).
+- Documented that `tags` cannot be set through `update_recipe` — a string returns 200 and is silently dropped, while an array or `tag_list` returns `500 ArgumentError`. Tags still carry forward through `scale_recipe` cloning a tagged template.
+- `FIELDS_DESC` now lists the attribute names that actually appear in `get_recipe` responses.
+- Narrowed the distribution restriction to the one thing ReciPal asked for: no assistant plugin packages. npm, registry listings, and npx are no longer excluded.
+- `SUNSET.md` softened to match ReciPal's actual wording, added an upstream-fork invitation, and added an `npm deprecate` step to the archive checklist.
+
 ## 0.5.0 — renamed, per agreement with ReciPal
 
 ReciPal reviewed this project and agreed to it being published, subject to three things. No

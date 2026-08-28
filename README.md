@@ -17,37 +17,33 @@ ReciPal's web UI is fine for editing one recipe. It is painful when you need to 
 
 The tool that earns its keep is `bulk_clone_and_swap`: take one fully-configured recipe as a template, clone it N times, and swap a single ingredient in each clone. Label settings, tags, and serving sizes carry forward, so the clones come out consistent.
 
-## Scope and distribution
+## Scope
 
-Deliberately narrow, and it will stay that way:
+**One restriction, and it comes from ReciPal:** no assistant plugin packages. No Claude,
+ChatGPT, or other plugin bundle, and no submission to a plugin store — ReciPal will be
+publishing those themselves alongside their official MCP server. Pull requests that add
+assistant plugin packaging will be declined for that reason and no other.
 
-- **Source you clone and build.** There is no one-click plugin bundle, no `npx` package, and no
-  listing in any MCP directory or marketplace. That is a commitment made to ReciPal, not an
-  oversight or a to-do item.
-- **Not published to npm.** The `package.json` is marked `private` on purpose.
-- **Named `recipal-mcp-unofficial`** at ReciPal's request, so it cannot be mistaken for their
-  official server.
-
-Pull requests that add packaged distribution, marketplace submissions, or a friendlier consumer
-install path will be declined. See [CONTRIBUTING.md](CONTRIBUTING.md) for what is welcome.
+Everything else is open. This is published to npm and installable with `npx`, and it is
+named `recipal-mcp-unofficial` at ReciPal's suggestion so it cannot be mistaken for their
+official server.
 
 ## Install
 
 Requires Node.js 18 or newer.
 
+### For users (npx)
+
 ```bash
-git clone https://github.com/BlackBlack/recipal-mcp-unofficial.git
-cd recipal-mcp-unofficial
-npm install
-npm run build
+npx -y recipal-mcp-unofficial
 ```
 
-Then register it with your MCP client. For Claude Code:
+Register it with your MCP client. For Claude Code:
 
 ```bash
 claude mcp add --transport stdio recipal-mcp-unofficial \
   --env RECIPAL_API_KEY=your_key_here \
-  -- node /absolute/path/to/recipal-mcp-unofficial/build/index.js
+  -- npx -y recipal-mcp-unofficial
 ```
 
 For Claude Desktop, add to `claude_desktop_config.json`:
@@ -56,8 +52,8 @@ For Claude Desktop, add to `claude_desktop_config.json`:
 {
   "mcpServers": {
     "recipal-mcp-unofficial": {
-      "command": "node",
-      "args": ["/absolute/path/to/recipal-mcp-unofficial/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "recipal-mcp-unofficial"],
       "env": { "RECIPAL_API_KEY": "your_key_here" }
     }
   }
@@ -65,6 +61,19 @@ For Claude Desktop, add to `claude_desktop_config.json`:
 ```
 
 Restart the client, then ask it to list your recipes. You should see 19 tools available. Full walkthrough in [docs/SETUP.md](docs/SETUP.md).
+
+### For development (clone and build)
+
+Use this to run an unpublished change or to work on the source:
+
+```bash
+git clone https://github.com/RBV801/recipal-mcp-unofficial.git
+cd recipal-mcp-unofficial
+npm install
+npm run build
+```
+
+Then register the built `build/index.js` with an absolute path. Full walkthrough in [docs/SETUP.md](docs/SETUP.md).
 
 ## ⚠️ Read this before pointing it at a catalog you care about
 
@@ -118,12 +127,25 @@ Write tools take an open `fields` object rather than a fixed parameter list. Rec
 
 These are real, verified against the live API, and worth knowing before you build on this:
 
-- **`create_recipe_shortcut` does not work.** It returns HTTP 422 for every ingredients-array format tried. ReciPal's docs truncate before the parameter list, so the correct shape is unknown. Use `create_recipe` + `create_recipe_ingredient`, or `scale_recipe` to clone a configured template. The tool is left in place so the shape can be discovered — if you work it out, please open a PR.
 - **`PUT /recipe_ingredients/{id}` silently ignores `ingredient_id`.** It returns HTTP 200 with the original ingredient still attached. Swapping one ingredient for another must be done as delete-then-create, which is what `bulk_clone_and_swap` does internally.
 - **ReciPal double-wraps almost every response** — `{recipe: {recipe_ingredients: [{recipe_ingredient: {…}}]}}`. Reading fields off the outer envelope yields `undefined` with no error. If you extend this server, use the existing `unwrap()` / `extractRecords()` helpers.
 - **Parameter names for `scale_recipe` and `create_subrecipe` are not published.** They work via pass-through `fields`, but run each once against a throwaway recipe and read the response before looping.
 - **The docs list `/recipes/{id}/scale` as `PUT`; `POST` is what actually works.** Don't "fix" this without testing.
-- **No pagination helper.** `list_recipes` caps at 100 per page; walk pages yourself.
+- **No pagination helper.** `list_recipes` and `list_ingredients` cap at 20 per page; larger values are silently reduced to 20, so walk pages yourself.
+- **A wrong or unowned ID returns `401 Unauthorized`, not `404`.** Requesting an
+  ingredient or recipe your account does not own answers
+  `{"error":"NotAuthorized"}` — identical to an authentication failure. If you get a 401
+  on a call that worked a moment ago, suspect the ID before you suspect your API key.
+- **Not every recipe attribute you pass is applied, and unknown ones fail silently.** A
+  `PUT` returns 200 having quietly dropped fields it does not recognise. Always
+  `get_recipe` an existing recipe and copy the attribute names from the response rather
+  than guessing.
+- **`tags` cannot be set through `update_recipe`.** A tags string returns 200 and is
+  silently dropped; an array or `tag_list` returns `500 ArgumentError`. In the same
+  request, `package_yield_quantity`, `packages` and `sku` all apply correctly, so this is
+  specific to tags rather than to the encoding. Tags do carry forward when `scale_recipe` 
+  clones a tagged template, which is currently the only reliable way to get them onto a
+  new recipe.
 
 ## Rate limits
 

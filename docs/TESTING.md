@@ -115,13 +115,16 @@ confirm that check still fires by reading the result report, not just the status
 
 ## Known failures — not regressions
 
-Two things fail by design; don't spend time debugging them:
+Three things fail by design; don't spend time debugging them:
 
 - **`create_recipe_shortcut` returns HTTP 422** for every ingredients-array format
   tried. ReciPal's docs truncate before the parameter list. If you work out the
   correct shape, that is a genuinely valuable PR.
 - **`update_recipe_ingredient` ignores `ingredient_id`**, returning 200 with the
   original ingredient attached. Use delete-then-create.
+- **Setting `tags` via `update_recipe` does not work** — silently dropped as a string,
+  `500 ArgumentError` as an array or as `tag_list`. Clone a tagged template with
+  `scale_recipe` instead.
 
 ## Reporting a bug
 
