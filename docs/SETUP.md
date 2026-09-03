@@ -121,7 +121,7 @@ Add them alongside `RECIPAL_API_KEY` in the same `env` block:
 Restart the client. The startup line on stderr reports what is exposed:
 
 ```
-[recipal-mcp-unofficial] ready — v0.5.0, 21/22 tools exposed, base https://www.recipal.com/api/v1; disabled: recipal_request
+[recipal-mcp-unofficial] ready — v0.6.2, 19/20 tools exposed, base https://www.recipal.com/api/v1; disabled: recipal_request
 ```
 
 ## Upgrading

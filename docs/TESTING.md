@@ -15,7 +15,7 @@ real subprocess and talk MCP to it over stdio, so they exercise the actual
 transport rather than importing internals. They cover:
 
 - The MCP handshake, and that `serverInfo` reports a sane name and version.
-- **22 tools with both gate flags set, 19 without** — the default surface never
+- **20 tools with both gate flags set, 17 without** — the default surface never
   includes `delete_recipe`, `delete_recipe_ingredient`, or `recipal_request`.
 - Every tool has a description and a valid `object` input schema, and every name
   listed in `required` is actually defined in `properties`.
@@ -106,12 +106,7 @@ confirm that check still fires by reading the result report, not just the status
 | 19 | Set `RECIPAL_MCP_ALLOW_DELETE=1`, restart, delete the throwaway | Works. Gone from the UI |
 | 20 | With `RECIPAL_MCP_ENABLE_RAW=1`, "GET /recipes/`<ID>`" via the raw tool | Raw JSON **including the outer envelope** — useful for discovering field names |
 
-### Labels
 
-| # | Ask for | Expect |
-|---|---|---|
-| 21 | "Request a PDF label render for recipe `<ID>`" | Accepted; renders take seconds |
-| 22 | "Check the label status for recipe `<ID>`" | Status or label data. Never request more than 5 renders concurrently |
 
 ## Known failures — not regressions
 
