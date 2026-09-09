@@ -10,6 +10,28 @@ import { listTools, callTool, serverExit, withServer } from "../scripts/mcp-harn
 
 const GATED = ["delete_recipe", "delete_recipe_ingredient", "recipal_request"];
 const ALL_GATES = { RECIPAL_MCP_ALLOW_DELETE: "1", RECIPAL_MCP_ENABLE_RAW: "1" };
+const ALL_TOOLS = [
+  "list_recipes",
+  "get_recipe",
+  "get_recipe_nutrition",
+  "list_recipe_ingredients",
+  "get_recipe_ingredient",
+  "list_ingredients",
+  "get_ingredient",
+  "create_recipe",
+  "create_recipe_shortcut",
+  "update_recipe",
+  "scale_recipe",
+  "create_subrecipe",
+  "delete_recipe",
+  "create_recipe_ingredient",
+  "update_recipe_ingredient",
+  "delete_recipe_ingredient",
+  "update_ingredient",
+  "bulk_create_subrecipes",
+  "bulk_clone_and_swap",
+  "recipal_request",
+];
 
 test("server completes the MCP handshake and reports its name and version", async () => {
   await withServer({}, async ({ init }) => {
@@ -20,12 +42,10 @@ test("server completes the MCP handshake and reports its name and version", asyn
 
 test("with all gates enabled, the full tool surface is advertised", async () => {
   const tools = await listTools(ALL_GATES);
-  assert.equal(tools.length, 20, `expected 20 tools, got ${tools.length}`);
-  for (const name of GATED) {
-    assert.ok(
-      tools.some((t) => t.name === name),
-      `${name} should be present when its gate is enabled`
-    );
+  const names = tools.map((t) => t.name);
+  assert.equal(names.length, 20, `expected 20 tools, got ${names.length}`);
+  for (const name of ALL_TOOLS) {
+    assert.ok(names.includes(name), `${name} should be present when its gate is enabled`);
   }
 });
 
@@ -48,6 +68,9 @@ test("every tool has a description and a valid object input schema", async () =>
         Object.prototype.hasOwnProperty.call(t.inputSchema.properties ?? {}, req),
         `${t.name} marks "${req}" required but does not define it`
       );
+    }
+    for (const hint of ["readOnlyHint", "destructiveHint", "idempotentHint", "openWorldHint"]) {
+      assert.equal(typeof t.annotations?.[hint], "boolean", `${t.name} must declare ${hint}`);
     }
   }
 });

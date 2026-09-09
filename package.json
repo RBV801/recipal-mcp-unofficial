@@ -31,9 +31,10 @@
     "typecheck": "tsc --noEmit",
     "gen:docs": "node scripts/gen-tools-doc.mjs",
     "test": "node --test test/smoke.test.mjs",
+    "pretest": "npm run build",
     "prepare": "npm run build",
     "start": "node build/index.js",
-    "verify": "npm run typecheck && npm run build && npm run gen:docs && npm test"
+    "verify": "npm run typecheck && npm test && npm run gen:docs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "~1.0.4"

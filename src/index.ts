@@ -628,7 +628,37 @@ const TOOLS: Tool[] = [
   },
 ];
 
-const enabledTools = (): Tool[] => TOOLS.filter((t) => isEnabled(t.name));
+const TOOL_ANNOTATIONS: Record<
+  string,
+  { readOnlyHint: boolean; destructiveHint: boolean; idempotentHint: boolean; openWorldHint: boolean }
+> = {
+  list_recipes: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+  get_recipe: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+  get_recipe_nutrition: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+  list_recipe_ingredients: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+  get_recipe_ingredient: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+  list_ingredients: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+  get_ingredient: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+  create_recipe: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  create_recipe_shortcut: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  update_recipe: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+  scale_recipe: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  create_subrecipe: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  delete_recipe: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: true },
+  create_recipe_ingredient: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  update_recipe_ingredient: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+  delete_recipe_ingredient: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: true },
+  update_ingredient: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+  bulk_create_subrecipes: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  bulk_clone_and_swap: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  recipal_request: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+};
+
+const enabledTools = () =>
+  TOOLS.filter((t) => isEnabled(t.name)).map((t) => ({
+    ...t,
+    annotations: TOOL_ANNOTATIONS[t.name]!,
+  }));
 
 /* ------------------------------------------------------------------ *
  * Response shape helpers
