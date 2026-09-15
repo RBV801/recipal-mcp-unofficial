@@ -1,8 +1,8 @@
 {
   "name": "recipal-mcp-unofficial",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "type": "module",
-  "description": "Unofficial MCP server for the ReciPal nutrition-label API \u2014 recipes, ingredients, subrecipes, labels, and bulk clone/swap.",
+  "description": "Unofficial MCP server for the ReciPal nutrition-label API — recipes, ingredients, subrecipes, labels, and bulk clone/swap.",
   "license": "Apache-2.0",
   "author": "Rakmun Bryant-Vick",
   "files": ["build"],
@@ -37,7 +37,7 @@
     "verify": "npm run typecheck && npm test && npm run gen:docs"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "~1.0.4"
+    "@modelcontextprotocol/sdk": "~1.30.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

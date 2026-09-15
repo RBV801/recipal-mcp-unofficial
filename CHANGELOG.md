@@ -3,6 +3,10 @@
 All notable changes to this project. Versions before 0.4.0 were internal and are
 summarised here for context rather than documented in full.
 
+## 0.6.3
+
+- Unpinned `@modelcontextprotocol/sdk` from `~1.0.4` to `~1.30.0`. The 1.0.4 pin (see 0.6.1/0.6.2) predated current client behaviour: SDK 1.30 still negotiates `2024-11-05` when the client requests it — verified directly against the built server and by the full smoke suite, which handshakes on that version. The upgrade clears GHSA-w48q-cv73-mx4w (DNS-rebinding protection advisory on SDK `<1.24.0`); `npm audit` is now clean.
+
 ## 0.6.2
 
 - Re-pinned `@modelcontextprotocol/sdk` to `~1.0.4`. SDK `1.12.3` still advertised `2025-03-26` as a supported protocol version, which Devin rejected; `1.0.4` only advertises `2024-11-05` and `2024-10-07`.
